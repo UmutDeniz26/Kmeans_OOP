@@ -1,0 +1,2 @@
+C:\Users\Umut\Desktop\Programming\C++\OOP 1\Kmeans\x64\Debug\Kmeans.exe
+C:\Users\umutc\Desktop\Programming\C++\Kmeans\x64\Debug\Kmeans.exe
