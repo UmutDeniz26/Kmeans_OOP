@@ -140,16 +140,14 @@
   <ItemGroup>
     <ClCompile Include="KMeansOperations.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Sample.cpp" />
-    <ClCompile Include="SampleVector.cpp" />
-    <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="Point.cpp" />
+    <ClCompile Include="PointVector.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="KMeansOperations.h" />
     <ClInclude Include="matplotlibcpp.h" />
-    <ClInclude Include="Sample.h" />
-    <ClInclude Include="SampleVector.h" />
-    <ClInclude Include="Timer.h" />
+    <ClInclude Include="Point.h" />
+    <ClInclude Include="PointVector.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

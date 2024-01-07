@@ -1,7 +1,7 @@
 #ifndef KMEANSOPERATIONS_H
 #define KMEANSOPERATIONS_H
 
-#include "SampleVector.h"
+#include "PointVector.h"
 #include <string>
 #include <cstdlib> 
 #include <cmath>
@@ -16,9 +16,9 @@ using namespace std;
 /**
  * @brief Class representing KMeansOperations for K-Means clustering.
  *
- * This class extends SampleVector and provides functionality for K-Means operations.
+ * This class extends PointVector and provides functionality for K-Means operations.
  */
-class KMeansOperations : public SampleVector
+class KMeansOperations : public PointVector
 {
 public:
     KMeansOperations(string path,int=0, int=0);
@@ -26,9 +26,9 @@ public:
 
     ~KMeansOperations(void);
 
-    void setCentroid(int, Sample&);
-    void addClusterVector(SampleVector& a) ;
-    bool isItIncludeVector(SampleVector, vector<SampleVector>);
+    void setCentroid(int, Point&);
+    void addClusterVector(PointVector& a) ;
+    bool isItIncludeVector(PointVector, vector<PointVector>);
 
     bool setK(int);
     bool setEpoch(int);
@@ -37,31 +37,31 @@ public:
     int getK(void) const;
     int getEpoch(void) const;
     void getUserInput(void);
-    SampleVector& getSamplesVector(void);
-    SampleVector& getCentroidVector(void);
-    vector<SampleVector>& getClusterVectors(void);
-    vector<SampleVector>& assignNewClusters(void);
-    void clearClusterVectors(vector<SampleVector>&);
+    PointVector& getPointsVector(void);
+    PointVector& getCentroidVector(void);
+    vector<PointVector>& getClusterVectors(void);
+    vector<PointVector>& assignNewClusters(void);
+    void clearClusterVectors(vector<PointVector>&);
 
     void print(void);
     void plotClusters();
-    void plotCentroids(SampleVector&);
+    void plotCentroids(PointVector&);
 
     void run(void);
     void updateCentroids(void);
     void initFirstCentroids(void);
-    void initSamplesWithFile(string);
-    SampleVector& assignSamplesClosestCluster();
-    pair<double, double> calculateCentroidCoordinate(vector<Sample>);
+    void initPointsWithFile(string);
+    PointVector& assignPointsClosestCluster();
+    pair<double, double> calculateCentroidCoordinate(vector<Point>);
 
 private:
     int K; /**< The number of clusters (K). */
     int epoch; /**< The number of epochs. */
     const string path; /**< The path of the file. */
 
-    SampleVector samples; /**< The samples vector. */
-    SampleVector centroids; /**< The centroid vector. */
-    vector<SampleVector> clusterVectors; /**< Vectors of cluster centroids. */
+    PointVector points; /**< The points vector. */
+    PointVector centroids; /**< The centroid vector. */
+    vector<PointVector> clusterVectors; /**< Vectors of cluster centroids. */
 
 };
 

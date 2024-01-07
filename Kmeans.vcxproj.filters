@@ -18,33 +18,27 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sample.cpp">
+    <ClCompile Include="Point.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SampleVector.cpp">
+    <ClCompile Include="PointVector.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="KMeansOperations.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Timer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Sample.h">
+    <ClInclude Include="Point.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SampleVector.h">
+    <ClInclude Include="PointVector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="KMeansOperations.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="matplotlibcpp.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Timer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
