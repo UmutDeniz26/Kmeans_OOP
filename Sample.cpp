@@ -92,15 +92,6 @@ void Sample::print(void) {
         "  |  Cluster " << fixed << setw(3) << getClusterID() << endl;
 }
 
-ostream& Sample::operator<<(ostream& output) const{
-        output <<
-        "ID: " << setw(3) << getSampleID() <<
-        "  ,  value1: " << fixed << setw(12) << getFeatures().first <<
-        "  |  value2: " << fixed << setw(12) << getFeatures().second <<
-        "  |  Cluster " << fixed << setw(3) << getClusterID() << endl;
-        return output;
-}   
-
 /**
  * @brief Destructor for the Sample class.
  */

@@ -20,16 +20,13 @@ int main(int argc, char** argv) {
 
     // Print the results of the clustering.
     Kmean1.print();
+
     // Stop the timer and print the overall runtime of the program.
     timerRunTime.end();
     timerRunTime.print();
 
     // Plot the clusters using matplotlibcpp.
     Kmean1.plotClusters();
-
-
-    Sample a(1, 0, make_pair(-1, -1));
-    cout << a;
 
     return 0;
 }

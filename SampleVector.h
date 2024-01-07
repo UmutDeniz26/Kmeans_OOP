@@ -8,12 +8,14 @@
 #include <algorithm>
 
 using namespace std;
+
 /**
  * @brief Class representing a vector of samples.
  *
  * This class extends the Sample class and provides functionality
  * for managing a vector of samples.
  */
+
 class SampleVector : public Sample
 {
 public:

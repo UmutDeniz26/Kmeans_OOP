@@ -32,7 +32,6 @@ public:
 
     virtual void print(void);
     void operator=(const Sample& other);
-    ostream& operator<<(ostream& output) const;
 
 private:
     const int sampleID; ///< The ID of the sample.

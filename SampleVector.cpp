@@ -48,7 +48,8 @@ void SampleVector::print(void)
     cout << "Vector ID: " << getVectorID() <<"     Vector Type: "<<  getType() << endl;
     for_each(getVector().begin(), getVector().end(),
         [&](Sample& element) {
-            cout << "";
+            cout << "      ";
+            element.print();
         });
 }
 
