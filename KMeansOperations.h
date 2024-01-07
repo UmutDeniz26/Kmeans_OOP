@@ -3,6 +3,13 @@
 
 #include "SampleVector.h"
 #include <string>
+#include <cstdlib> 
+#include <cmath>
+#include <algorithm>
+#include <numeric>
+#include <deque>
+#include <iostream>
+#include <random>
 
 using namespace std;
 
@@ -14,15 +21,22 @@ using namespace std;
 class KMeansOperations : public SampleVector
 {
 public:
-    KMeansOperations(int, int);
+    KMeansOperations(string path,int=0, int=0);
+    KMeansOperations(string path);
+
     ~KMeansOperations(void);
 
     void setCentroid(int, Sample&);
     void addClusterVector(SampleVector& a) ;
     bool isItIncludeVector(SampleVector, vector<SampleVector>);
 
+    bool setK(int);
+    bool setEpoch(int);
+
+
     int getK(void) const;
     int getEpoch(void) const;
+    void getUserInput(void);
     SampleVector& getSamplesVector(void);
     SampleVector& getCentroidVector(void);
     vector<SampleVector>& getClusterVectors(void);
@@ -37,12 +51,13 @@ public:
     void updateCentroids(void);
     void initFirstCentroids(void);
     void initSamplesWithFile(string);
-    SampleVector& assignClosestCluster();
+    SampleVector& assignSamplesClosestCluster();
     pair<double, double> calculateCentroidCoordinate(vector<Sample>);
 
 private:
-    const int K; /**< The number of clusters (K). */
-    const int epoch; /**< The number of epochs. */
+    int K; /**< The number of clusters (K). */
+    int epoch; /**< The number of epochs. */
+    const string path; /**< The path of the file. */
 
     SampleVector samples; /**< The samples vector. */
     SampleVector centroids; /**< The centroid vector. */

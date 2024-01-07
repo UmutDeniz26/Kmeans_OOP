@@ -22,8 +22,8 @@ public:
     SampleVector(int ID = -1, int vectorLength = 0, string typeIn = "Not Defined");
     ~SampleVector();
 
-    void setVectorElement(int index, Sample input);
-    void addVectorElement(Sample input);
+    void setVectorElement(int index, Sample &input);
+    void setVectorElement(Sample input);
 
 
     Sample& getSampleElement(int index);
@@ -39,7 +39,7 @@ public:
 private:
     string type;
     const int vectorID; /**< The ID of the vector. */
-    vector<Sample> sampleVectorData; /**< The vector containing samples. */
+    vector<Sample> vectorData; /**< The vector containing samples. */
 };
 
 #endif

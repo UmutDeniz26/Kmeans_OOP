@@ -3,14 +3,6 @@
  * @brief Implementation of the KMeansOperations class for K-Means clustering.
  */
 #include "KMeansOperations.h"
-#include <cstdlib> 
-#include <cmath>
-#include <algorithm>
-#include <numeric>
-#include <deque>
-#include <iostream>
-#include <random>
-
 #include "matplotlibcpp.h"
 
 namespace plt = matplotlibcpp;
@@ -21,12 +13,10 @@ using namespace std;
  * @param Kval The number of clusters (K) for K-Means.
  * @param epochVal The number of epochs for K-Means clustering.
  */
-KMeansOperations::KMeansOperations(int Kval, int epochVal) : K(Kval), epoch(epochVal), 
-	centroids(-2, getK(), "Centroid Vector"), samples(-3,0,"Samples Vector"), 
-	clusterVectors(vector<SampleVector> (Kval,SampleVector(-4,0,"Cluster Vector"))) {
-	cout << "Constructor of KMEAN " << K << " - " << epoch << endl;
+KMeansOperations::KMeansOperations(string path ,int Kval, int epochVal) : epoch(epochVal), path(path),
+	samples(SampleVector(-3, 0, "Samples Vector")), K(Kval){}
 
-}
+KMeansOperations::KMeansOperations(string path) : path(path), K(0),epoch(0){}
 
 /**
  * @brief Initializes samples with data from a file.
@@ -35,30 +25,58 @@ KMeansOperations::KMeansOperations(int Kval, int epochVal) : K(Kval), epoch(epoc
 void KMeansOperations::initSamplesWithFile(string a) {
 	ifstream inputFile(a);
 	double X, Y;int i = 0, j = 1;
-	
 	for_each(
-		istream_iterator<double>(inputFile),
-		istream_iterator<double>(),
+		istream_iterator<double>(inputFile),istream_iterator<double>(),
 		[&](double value) {
-			if (i % 2 == 0)
-			{
+			if (i % 2 == 0){
 				X = value;
 			}
-			else
-			{
+			else{
 				Y = value;
-				getSamplesVector().addVectorElement(Sample(j++, 0, std::make_pair(X, Y)));
+				getSamplesVector().setVectorElement(Sample(j++, 0, std::make_pair(X, Y)));
 			}
-			i++;
-		}
+			i++;}
 	);
 	inputFile.close();
 }
+
+bool KMeansOperations::setK(int k) {
+	bool flag = k > 0 and k < Sample::getSampleCount();
+	if ( flag ) {K = k;}
+	return ( flag ) ? true: false;
+}
+
+bool KMeansOperations::setEpoch(int epoch) {
+	bool flag = epoch > 0;
+	if (flag) { this->epoch = epoch; }
+	return (flag) ? true : false;
+}
+
+void KMeansOperations::getUserInput(void) {
+	int temp_k, temp_epoch;
+	bool flag = true;
+
+	while (flag) {
+		cout << "Enter the number of clusters (K): ";cin >> temp_k;
+		if (!setK(temp_k)) { cout << "Invalid input. Please try again." << endl; continue; }
+		
+		cout << "Enter the number of epochs: ";cin >> temp_epoch;
+		if (!setEpoch(temp_epoch)) { cout << "Invalid input. Please try again." << endl; continue;}
+	}	
+}
+
 
 /**
  * @brief Runs the K-Means clustering algorithm.
  */
 void KMeansOperations::run(void) {
+	initSamplesWithFile(path);
+	if (!setK(getK())) {
+		getUserInput();
+	}
+	centroids = SampleVector(-2, getK(), "Centroid Vector");
+	clusterVectors = vector<SampleVector>(getK(), SampleVector(-4, 0, "Cluster Vector"));
+
 	initFirstCentroids();
 	for (int i = 0; i < getEpoch(); i++) {
 		updateCentroids();
@@ -71,26 +89,24 @@ void KMeansOperations::run(void) {
 void KMeansOperations::initFirstCentroids() {
 	int i = 0;
 	srand(static_cast<unsigned int>(time(nullptr)));//random time
-
 	random_device rd;mt19937 gen(rd());
 	uniform_int_distribution<int> dis(0, Sample::getSampleCount());
-
 	transform(centroids.getVector().begin(), centroids.getVector().end(), centroids.getVector().begin(),
 		[&](Sample& element) {
-			return Sample(-1, i++, getSamplesVector().getSampleElement(dis(gen)).getFeatures());
+			return new Sample(-5, i++, getSamplesVector().getSampleElement(dis(gen)).getFeatures());
 		}
 	);
-
 }
 
 /**
  * @brief Assigns each sample to its closest cluster based on current centroids.
  * @return The updated samples vector.
  */
-SampleVector& KMeansOperations::assignClosestCluster(void) {
+SampleVector& KMeansOperations::assignSamplesClosestCluster(void) {
 	double d1, d2, d; int newCluster, i = 0;
 
-	deque<double> tempDistanceArr(getK()); deque<double>::iterator maxDistanceIt;
+	deque<double> tempDistanceArr(getK()); 
+	deque<double>::iterator maxDistanceIt;
 	size_t index;
 	
 	for_each(getSamplesVector().getVector().begin(), getSamplesVector().getVector().end(),
@@ -100,8 +116,8 @@ SampleVector& KMeansOperations::assignClosestCluster(void) {
 					d1 = element.getFeatures().first - centroid.getFeatures().first;
 					d2 = element.getFeatures().second - centroid.getFeatures().second;
 					d = sqrt(pow(d1, 2) + pow(d2, 2));
-					tempDistanceArr[(int(i++) % getK())] = d; //overwrite distances by using mod
-					});
+					tempDistanceArr[(i++ % getK())] = d; //overwrite distances by using mod
+			});
 		maxDistanceIt = min_element(tempDistanceArr.begin(), tempDistanceArr.end());  // find iterator
 		index = distance(tempDistanceArr.begin(), maxDistanceIt); // calculate index
 		newCluster = getCentroidVector().getVector()[index].getClusterID(); // decide newCluster
@@ -158,7 +174,7 @@ void KMeansOperations::clearClusterVectors(vector<SampleVector>& in) {
  * @brief Updates the centroids based on the current assignment of samples to clusters.
  */
 void KMeansOperations::updateCentroids(void) {
-	assignClosestCluster();
+	assignSamplesClosestCluster();
 	transform(getCentroidVector().getVector().begin(), getCentroidVector().getVector().end(), getCentroidVector().getVector().begin(),
 		[&](Sample& element) {
 			return Sample(0, element.getClusterID(), calculateCentroidCoordinate(clusterVectors[element.getClusterID()].getVector()));
@@ -183,85 +199,21 @@ pair<double, double> KMeansOperations::calculateCentroidCoordinate(vector<Sample
 	//cout << "X: " << X << "    Y: " << Y <<"     size: "<<vectorInput.size() << endl;
 	return make_pair(X, Y);
 }
-/**
- * @brief Getter for the number of clusters (K).
- * @return The number of clusters.
- */
-int KMeansOperations::getK(void) const {
-	return K;
-}
 
+int KMeansOperations::getK(void) const {return K;}
+int KMeansOperations::getEpoch(void) const {return epoch;}
+void KMeansOperations::setCentroid(int index, Sample& input) {centroids.setVectorElement(index, input);}
+SampleVector& KMeansOperations::getCentroidVector(void) {return centroids;}
+SampleVector& KMeansOperations::getSamplesVector(void) {return samples;}
+vector<SampleVector>& KMeansOperations::getClusterVectors() {return clusterVectors;}
 
-/**
- * @brief Getter for the number of epochs.
- * @return The number of epochs.
- */
-int KMeansOperations::getEpoch(void) const {
-	return epoch;
-}
-
-
-/**
- * @brief Sets a centroid at a specific index in the centroid vector.
- * @param index The index at which to set the centroid.
- * @param input The centroid sample to set.
- */
-void KMeansOperations::setCentroid(int index, Sample& input) {
-	centroids.setVectorElement(index, input);
-}
-
-/**
- * @brief Getter function to obtain the centroid vector.
- * @return Reference to the centroid vector.
- */
-SampleVector& KMeansOperations::getCentroidVector(void) {
-	return centroids;
-}
-
-/**
- * @brief Getter function to obtain the samples vector.
- * @return Reference to the samples vector.
- */
-SampleVector& KMeansOperations::getSamplesVector(void) {
-	return samples;
-}
-
-/**
- * @brief Gets the vectors corresponding to each cluster.
- * @return Vector containing the cluster vectors.
- */
-vector<SampleVector>& KMeansOperations::getClusterVectors() {
-	return clusterVectors;
-}
 const std::vector<std::string> colors = {
 	"mediumaquamarine", "lawngreen", "mediumblue", "paleturquoise",
 	"mediumpurple", "dodgerblue", "mediumslateblue", "darkcyan",
 	"mediumseagreen", "lightcyan", "lightblue", "mediumseagreen",
 	"forestgreen", "olive", "darkolivegreen", "lightgoldenrodyellow",
 	"olivedrab", "mediumturquoise", "cyan", "seashell", "darkgray",
-	"mediumslateblue", "darkblue", "lightyellow", "yellowgreen",
-	"silver", "papayawhip", "green", "midnightblue", "mediumcyan",
-	"aquamarine", "rebeccapurple", "lemonchiffon", "plum", "lightgray",
-	"mediumorchid", "darkgray", "royalblue", "limegreen", "skyblue",
-	"darkmagenta", "blue", "blueviolet", "indigo", "lightblue",
-	"darkviolet", "cyan", "mediumblue", "moccasin", "blueviolet",
-	"darkcyan", "mediumseagreen", "ivory", "lightskyblue", "yellowgreen",
-	"chartreuse", "darkorchid", "teal", "seagreen", "navy", "azure",
-	"darkgreen", "palegreen", "lightgray", "mediumorchid", "mediumslateblue",
-	"navajowhite", "beige", "lightyellow", "orchid", "lightskyblue",
-	"mediumspringgreen", "antiquewhite", "lavender", "deepskyblue",
-	"powderblue", "darkslateblue", "lightgreen", "palegreen", "thistle",
-	"azure", "orchid", "blue", "darkorchid", "violet", "cornflowerblue",
-	"palegreen", "cornflowerblue", "wheat", "snow", "mediumturquoise",
-	"springgreen", "darkblue", "violet", "lightcyan", "seagreen",
-	"palegreen", "darkorchid", "darkslateblue", "springgreen", "lavender",
-	"chartreuse", "mediumcyan", "mediumpurple", "darkslateblue", "turquoise",
-	"mediumturquoise", "fuchsia", "darkcyan", "mediumpurple", "mediumaquamarine",
-	"plum", "magenta", "darkgreen", "mediumcyan", "springgreen", "darkorchid",
-	"slateblue", "chartreuse", "mediumspringgreen", "chartreuse", "mediumorchid",
-	"darkslateblue", "mediumblue"
-
-
+	"mediumslateblue", "darkblue", "lightyellow", "yellowgreen"
 };
 /**
  * @brief Prints the centroids and samples vectors.
@@ -274,28 +226,27 @@ void KMeansOperations::print() {
 	getSamplesVector().print();
 
 	// Print information about clusters
-	vector<SampleVector> clusterVectorslocal = getClusterVectors();
-	for (int i = 0; i < clusterVectorslocal.size(); ++i) {
+	for (int i = 0; i < getClusterVectors().size(); ++i) {
 		cout << "Cluster " << i + 1 <<"( " <<colors[i] <<" )" << ": ";
-		cout << "Number of samples: " << clusterVectorslocal[i].getVector().size() << endl; //clusterVectors[i].size() << endl;
-
-
+		cout << "Number of samples: " << getClusterVectors()[i].getVector().size() << endl;
 	}
+
+	cout <<endl<< "K value: " << getK() << endl;
+	cout << "Epoch: " << getEpoch() << endl;
+
 }
 
 /**
  * @brief Plots the clusters using matplotlibcpp library.
  */
 void KMeansOperations::plotClusters() {
-	// Get cluster vectors
-	vector<SampleVector> clusterVectors = assignNewClusters();
 
 	// Plot each cluster
-	for (int i = 0; i < clusterVectors.size(); ++i) {
+	for (int i = 0; i < getClusterVectors().size(); ++i) {
 		vector<double> x, y;
 
 		// Extract x and y coordinates from each sample in the cluster
-		for (const auto& sample : clusterVectors[i].getVector()) {
+		for (const auto& sample : getClusterVectors()[i].getVector()) {
 			x.push_back(sample.getFeatures().first);
 			y.push_back(sample.getFeatures().second);
 		}
@@ -305,9 +256,7 @@ void KMeansOperations::plotClusters() {
 	}
 
 	// Add labels and show the plot
-	plt::xlabel("X-axis");
-	plt::ylabel("Y-axis");
-	plt::title("K-Means Clustering");
+	plt::xlabel("X-axis");plt::ylabel("Y-axis");plt::title("K-Means Clustering");
 
 	plotCentroids(getCentroidVector());
 	plt::show();
@@ -319,13 +268,11 @@ void KMeansOperations::plotClusters() {
  */
 void KMeansOperations::plotCentroids(SampleVector& centroids) {
 	vector<double> x, y;
-
 	// Extract x and y coordinates from each centroid
 	for (const auto& centroid : centroids.getVector()) {
 		x.push_back(centroid.getFeatures().first);
 		y.push_back(centroid.getFeatures().second);
 	}
-
 	// Plot crosses at the final centroids
 	plt::plot(x, y, "rx");  // "rx" specifies red crosses
 	plt::pause(0.01);  // Pause to update the plot

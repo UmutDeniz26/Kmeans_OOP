@@ -21,23 +21,24 @@ public:
     Sample(int ID = -1, int cluster = 0, pair<double, double> featuresIn = make_pair(-1, -1));
     ~Sample();
 
-    static int getSampleCount(void);
-
-    void setClusterID(int cluster);
-    void setFeatures(pair<double, double> features);
+    void setClusterID(int);
+    void setFeatures(pair<double, double>);
 
     pair<double, double> getFeatures(void) const;
     int getClusterID(void) const;
     int getSampleID(void) const;
+    static int getSampleCount(void);
 
     virtual void print(void);
-    void operator=(const Sample& other);
+    void operator=(const Sample&);
+    void operator=(const Sample*);
 
 private:
+    pair<double, double> features; ///< The features of the sample.
+    static int sampleCount; ///< The count of samples.
     const int sampleID; ///< The ID of the sample.
     int clusterID;      ///< The cluster ID of the sample.
-    static int sampleCount; ///< The count of samples.
-    pair<double, double> features; ///< The features of the sample.
+    
 };
 
 #endif

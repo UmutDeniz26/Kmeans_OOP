@@ -10,10 +10,7 @@ int main(int argc, char** argv) {
     timerRunTime.start();
 
     // Create an instance of KMeansOperations with 3 clusters and 20 epochs.
-    KMeansOperations Kmean1(6, 10);
-
-    // Initialize sample data from the file "40.txt".
-    Kmean1.initSamplesWithFile("40.txt");
+    KMeansOperations Kmean1("40.txt",-1, 10);
 
     // Run the K-Means clustering algorithm.
     Kmean1.run();

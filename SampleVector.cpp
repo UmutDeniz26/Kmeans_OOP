@@ -4,40 +4,29 @@ using namespace std;
 
 /**
  * @brief Constructor for SampleVector that initializes an empty vector with a specified length.
- * @param ID The identifier for the vector.
- * @param vectorLength The length of the vector to be created.
  */
-SampleVector::SampleVector(int ID, int vectorLength, string typeIn) : vectorID(ID), type(typeIn)
-{
-    cout << "Constructor of vector " << vectorID << " - " << getType() << endl;
-    sampleVectorData = vector<Sample>(vectorLength);
+SampleVector::SampleVector(int ID, int vectorLength, string typeIn) : vectorID(ID), type(typeIn), vectorData(vector<Sample>(vectorLength)){
 }
 
 /**
  * @brief Destructor for SampleVector.
  */
 SampleVector::~SampleVector()
-{
-    cout<<"Destructor of vector "<<vectorID<< " - " << getType() << endl;
-}
+{}
+
 
 /**
  * @brief Sets the vector element at the specified index.
- * @param index The index of the element to set.
- * @param input The Sample object to set at the specified index.
  */
-void SampleVector::setVectorElement(int index, Sample input)
-{
-    sampleVectorData[index] = input;
+void SampleVector::setVectorElement(int index, Sample &input){
+    vectorData[index] = input;
 }
 
 /**
- * @brief Adds a Sample object to the end of the vector.
- * @param input The Sample object to add to the vector.
+ * @brief Overloaded setVectorElement function to add a Sample to the vector.
  */
-void SampleVector::addVectorElement(Sample input)
-{
-    sampleVectorData.push_back(input);
+void SampleVector::setVectorElement(Sample input){
+	vectorData.push_back(input);
 }
 
 /**
@@ -53,9 +42,19 @@ void SampleVector::print(void)
         });
 }
 
+string SampleVector::getType(void) const {return type;}
+Sample& SampleVector::getSampleElement(int index){return getVector()[index];}
+int SampleVector::getVectorID(void) const{return vectorID;}
+vector<Sample>& SampleVector::getVector(void){return vectorData;}
 
-string SampleVector::getType(void) const {
-    return type;
+
+/**
+* @brief Overloaded less than operator for SampleVector.
+ * @param other The SampleVector to compare to.
+ * @return True if the vectorID of this SampleVector is less than the vectorID of the other SampleVector.
+*/
+bool SampleVector::operator<(const SampleVector& other) const{
+    return vectorID < other.vectorID;
 }
 
 /**
@@ -67,41 +66,9 @@ SampleVector& SampleVector::operator=(const SampleVector& other)
 {
     if (this != &other)
     {
-        // Perform a deep copy of sampleVectorData or use the copy constructor
+        // Perform a deep copy of vectorData or use the copy constructor
         this->type = other.type;
-        this->sampleVectorData = other.sampleVectorData;
+        this->vectorData = other.vectorData;
     }
     return *this;
-}
-
-/**
- * @brief Gets the Sample object at the specified index.
- * @param index The index of the Sample object to retrieve.
- * @return A reference to the Sample object at the specified index.
- */
-Sample& SampleVector::getSampleElement(int index)
-{
-    return getVector()[index];
-}
-
-/**
- * @brief Gets the identifier of the vector.
- * @return The identifier of the vector.
- */
-int SampleVector::getVectorID(void) const
-{
-    return vectorID;
-}
-
-bool SampleVector::operator<(const SampleVector& other) const{
-    return vectorID < other.vectorID;
-}
-
-/**
- * @brief Gets the vector data.
- * @return A reference to the vector data.
- */
-vector<Sample>& SampleVector::getVector(void)
-{
-    return sampleVectorData;
 }
