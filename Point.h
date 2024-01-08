@@ -1,8 +1,3 @@
-/**
- * @file Point.h
- * @brief Header of the Point class.
- */
-
 #ifndef SAMPLE_H
 #define SAMPLE_H
 
@@ -12,24 +7,29 @@
 #include <string>
 using namespace std;
 
-/**
- * @brief Class representing a point with an ID, cluster ID, and features.
- */
 class Point
 {
 public:
+    /// Constructor.
     Point(int ID = -1, int cluster = 0, pair<double, double> featuresIn = make_pair(-1, -1));
+    
+    /// Destructor.
     ~Point();
 
+    /// Setters.
     void setClusterID(int);
     void setFeatures(pair<double, double>);
 
+    /// Getters.
     pair<double, double> getFeatures(void) const;
     int getClusterID(void) const;
     int getPointID(void) const;
     static int getPointCount(void);
 
+    /// Print the point.
     virtual void print(void);
+    
+    /// Operators overloading.
     void operator=(const Point&);
     void operator=(const Point*);
 

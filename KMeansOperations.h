@@ -13,27 +13,27 @@
 
 using namespace std;
 
-/**
- * @brief Class representing KMeansOperations for K-Means clustering.
- *
- * This class extends PointVector and provides functionality for K-Means operations.
- */
 class KMeansOperations : public PointVector
 {
 public:
+    /// Constructors
     KMeansOperations(string path,int=0, int=0);
     KMeansOperations(string path);
 
+    /// Destructor
     ~KMeansOperations(void);
 
+    /// Vector Operations
     void setCentroid(int, Point&);
     void addClusterVector(PointVector& a) ;
+    void clearClusterVectors(vector<PointVector>&);
     bool isItIncludeVector(PointVector, vector<PointVector>);
 
+    /// Setters
     bool setK(int);
     bool setEpoch(int);
 
-
+    /// Getters
     int getK(void) const;
     int getEpoch(void) const;
     void getUserInput(void);
@@ -41,12 +41,13 @@ public:
     PointVector& getCentroidVector(void);
     vector<PointVector>& getClusterVectors(void);
     vector<PointVector>& assignNewClusters(void);
-    void clearClusterVectors(vector<PointVector>&);
-
+    
+    /// Print operations
     void print(void);
     void plotClusters();
     void plotCentroids(PointVector&);
 
+    /// K-Means operations
     void run(void);
     void updateCentroids(void);
     void initFirstCentroids(void);
@@ -55,13 +56,13 @@ public:
     pair<double, double> calculateCentroidCoordinate(vector<Point>);
 
 private:
-    int K; /**< The number of clusters (K). */
-    int epoch; /**< The number of epochs. */
-    const string path; /**< The path of the file. */
+    int K;                              /**< Number of clusters */
+    int epoch;                          /**< Number of iterations */
+    const string path;                  /**< Path of the file */
 
-    PointVector points; /**< The points vector. */
-    PointVector centroids; /**< The centroid vector. */
-    vector<PointVector> clusterVectors; /**< Vectors of cluster centroids. */
+    PointVector points;                 /**< Vector of points */
+    PointVector centroids;              /**< Vector of centroids */
+    vector<PointVector> clusterVectors; /**< Vector of clusters */
 
 };
 
