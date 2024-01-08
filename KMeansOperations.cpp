@@ -18,14 +18,12 @@ void KMeansOperations::initPointsWithFile(string filePath) {
 	try
 	{
 		if (!inputFile.is_open()) {
-			cout<<"maameen"<<endl;
-			invalid_argument("File could not be opened.");
+			throw invalid_argument("File is not found!");
 		}
 	}
 	catch (const invalid_argument& e)
 	{
-		cout << e.what() << endl;
-		cout<<"File could not be opened."<<endl;
+		cout << "Error: " <<e.what() << endl;
 		exit(1);
 	}
 	double X, Y;int i = 0, j = 1;
@@ -66,11 +64,21 @@ void KMeansOperations::getUserInput(void) {
 
 	while (flag) {
 		flag = false;
-		cout << "Enter the number of clusters (K): ";cin >> temp_k;
-		if (!setK(temp_k)) { cout << "Invalid input. Please try again." << endl; flag = true; continue; }
-		
-		cout << "Enter the number of epochs: ";cin >> temp_epoch;
-		if (!setEpoch(temp_epoch)) { cout << "Invalid input. Please try again." << endl; flag = true; continue;}
+		try {
+			cout << "Enter the number of clusters (K): "; cin >> temp_k;
+			if (!setK(temp_k)) { throw invalid_argument("Invalid input. Please try again.");}
+
+			cout << "Enter the number of epochs: "; cin >> temp_epoch;
+			if (!setEpoch(temp_epoch)) { throw invalid_argument("Invalid input. Please try again."); }
+		}
+		catch ( const invalid_argument& e){ 
+			cin.clear();
+			cin.ignore(numeric_limits<streamsize>::max(), '\n');
+			system( "cls" );
+			cout << "Error: " << e.what() << endl;
+			flag = true; 
+			continue;
+		}
 	}	
 }
 
@@ -125,12 +133,11 @@ PointVector& KMeansOperations::assignPointsClosestCluster(void) {
 		element.setClusterID(newCluster);
 		}
 	);
-
 	assignNewClusters();
 	return getPointsVector();
 }
 
-
+/// This function is used to assign points to the closest cluster
 vector<PointVector>& KMeansOperations::assignNewClusters() {
 	clearClusterVectors(clusterVectors);
 	for (int i = 0; i < getK(); i++) {
@@ -142,7 +149,7 @@ vector<PointVector>& KMeansOperations::assignNewClusters() {
 	return clusterVectors;
 }
 
-
+/// This function is used to update centroids
 void KMeansOperations::updateCentroids(void) {
 	assignPointsClosestCluster();
 	transform(getCentroidVector().getVector().begin(), getCentroidVector().getVector().end(), getCentroidVector().getVector().begin(),
@@ -151,6 +158,7 @@ void KMeansOperations::updateCentroids(void) {
 		});
 }
 
+/// This function is used to calculate centroid coordinates
 pair<double, double> KMeansOperations::calculateCentroidCoordinate(vector<Point> vectorInput) {
 	double X = 0, Y = 0;
 	for_each(vectorInput.begin(), vectorInput.end(),
@@ -163,6 +171,7 @@ pair<double, double> KMeansOperations::calculateCentroidCoordinate(vector<Point>
 	return make_pair(X, Y);
 }
 
+/// Getters and setters
 int KMeansOperations::getK(void) const {return K;}
 int KMeansOperations::getEpoch(void) const {return epoch;}
 void KMeansOperations::setCentroid(int index, Point& input) {centroids.setVectorElement(index, input);}
@@ -175,7 +184,7 @@ vector<PointVector>& KMeansOperations::getClusterVectors() {return clusterVector
 void KMeansOperations::addClusterVector(PointVector& a) {
 	getClusterVectors().push_back(a);
 }
-bool KMeansOperations::isItIncludeVector(PointVector target, vector<PointVector> whereToFind) {
+bool KMeansOperations::doesItIncludeVector(PointVector target, vector<PointVector> whereToFind) {
 	const int k_id = target.getClusterID();
 	bool flag = false;
 	for_each(whereToFind.begin(), whereToFind.end(), [&](PointVector& vectorElement) {
@@ -197,7 +206,7 @@ const vector<string> colors = {
 	"mediumaquamarine", "lawngreen", "mediumblue", "paleturquoise","mediumpurple", "dodgerblue", 
 	"mediumslateblue", "darkcyan", "mediumseagreen", "lightcyan", "lightblue", "mediumseagreen",
 	"forestgreen", "olive", "darkolivegreen", "lightgoldenrodyellow", "olivedrab", "mediumturquoise", 
-	"cyan", "seashell", "darkgray",
+	"cyan", "seashell", "darkgray", "darkslategray", "darkslateblue", "darkgreen", "darkblue", "darkred",
 };
 
 /// This function is used to print information about the clusters

@@ -5,7 +5,7 @@
 int main(int argc, char** argv) {
 
     // Create an instance of KMeansOperations with 3 clusters and 20 epochs.
-    KMeansOperations Kmean1("40.txt",3, 10);
+    KMeansOperations Kmean1("40.txt",-1, 10);
 
     // Run the K-Means clustering algorithm.
     Kmean1.run();

@@ -27,7 +27,7 @@ public:
     void setCentroid(int, Point&);
     void addClusterVector(PointVector& a) ;
     void clearClusterVectors(vector<PointVector>&);
-    bool isItIncludeVector(PointVector, vector<PointVector>);
+    bool doesItIncludeVector(PointVector, vector<PointVector>);
 
     /// Setters
     bool setK(int);
