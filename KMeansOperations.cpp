@@ -8,15 +8,15 @@ using namespace std;
 KMeansOperations::KMeansOperations(string path ,int Kval, int epochVal) : epoch(epochVal), path(path),
 	points(PointVector(1, 0, "Samples Vector")),K(Kval){
 }
-KMeansOperations::KMeansOperations(string path) : path(path), K(0),epoch(0){
+KMeansOperations::KMeansOperations(string path) : 
+	path(path), K(0),epoch(0), points(PointVector(1, 0, "Samples Vector")){
 }
 
 /// This function is used to initialize points with random values
 void KMeansOperations::initPointsWithFile(string filePath) {
 	
 	ifstream inputFile(filePath);
-	try
-	{
+	try{
 		if (!inputFile.is_open()) {
 			throw invalid_argument("File is not found!");
 		}
@@ -35,7 +35,7 @@ void KMeansOperations::initPointsWithFile(string filePath) {
 			}
 			else{
 				Y = value;
-				getPointsVector().setVectorElement(Point(j++, 0, make_pair(X, Y)));
+				getPointsVector().setVectorElement(Point(getandIncrementPointCount(), 0, make_pair(X, Y)));
 			}
 			i++;
 		}
@@ -88,8 +88,8 @@ void KMeansOperations::run(void) {
 	if (!setK(getK())) {
 		getUserInput();
 	}
-	centroids = PointVector(2, getK(), "Centroid Vector");
-	clusterVectors = vector<PointVector>(getK(), PointVector(-4, 0, "Cluster Vector"));
+	centroids = PointVector(-2, getK(), "Centroid Vector");
+	clusterVectors = vector<PointVector>(getK(), PointVector(-2, 0, "Cluster Vector"));
 
 	initFirstCentroids();
 	for (int i = 0; i < getEpoch(); i++) {
@@ -105,7 +105,7 @@ void KMeansOperations::initFirstCentroids() {
 	
 	transform(centroids.getVector().begin(), centroids.getVector().end(), centroids.getVector().begin(),
 		[&](Point& element) {
-			return new Point(-5, i++, getPointsVector().getPointElement(dis(gen)).getFeatures());
+			return new Point(i, i++, getPointsVector().getPointElement(dis(gen)).getFeatures());
 		}
 	);
 }

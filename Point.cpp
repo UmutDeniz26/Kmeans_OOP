@@ -6,7 +6,7 @@ int Point::pointCount = 0;
 
 /// Default constructor
 Point::Point(int ID, int cluster, pair<double, double> featuresIn) : pointID(ID), clusterID(cluster), features(featuresIn) {
-    if (ID >0) {pointCount += 1;}
+
 }
 
 /// Setters
@@ -14,7 +14,8 @@ void Point::setClusterID(int a) {clusterID = a;}
 void Point::setFeatures(pair<double, double> input) {features = input;}
 
 /// Getters
-int Point::getPointCount() {return pointCount;}
+int Point::getandIncrementPointCount() {return ++pointCount;}
+int Point::getPointCount() { return pointCount; }
 int Point::getClusterID(void) const {return clusterID;}
 int Point::getPointID(void)const {return pointID;}
 pair<double, double> Point::getFeatures(void) const { return features;}

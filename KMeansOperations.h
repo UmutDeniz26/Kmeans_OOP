@@ -17,7 +17,7 @@ class KMeansOperations : public PointVector
 {
 public:
     /// Constructors
-    KMeansOperations(string path,int=0, int=0);
+    KMeansOperations(string path,int, int);
     KMeansOperations(string path);
 
     /// Destructor

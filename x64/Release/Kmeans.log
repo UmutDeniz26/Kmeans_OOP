@@ -1,17 +1,7 @@
 ﻿  KMeansOperations.cpp
-C:\Users\umutc\Desktop\Programming\C++\Kmeans\KMeansOperations.cpp(246,8): error C2672: 'matplotlibcpp::scatter': no matching overloaded function found
-  C:\Users\umutc\Desktop\Programming\C++\Kmeans\matplotlibcpp.h(1019,6):
-  could be 'bool matplotlibcpp::scatter(const VectorX &,const VectorY &,const std::map<std::string,std::string,std::less<std::string>,std::allocator<std::pair<const std::string,std::string>>> &)'
-  	C:\Users\umutc\Desktop\Programming\C++\Kmeans\KMeansOperations.cpp(246,8):
-  	'bool matplotlibcpp::scatter(const VectorX &,const VectorY &,const std::map<std::string,std::string,std::less<std::string>,std::allocator<std::pair<const std::string,std::string>>> &)': expects 3 arguments - 4 provided
-  C:\Users\umutc\Desktop\Programming\C++\Kmeans\matplotlibcpp.h(988,6):
-  or       'bool matplotlibcpp::scatter(const VectorX &,const VectorY &,const double,const std::map<std::string,std::string,std::less<std::string>,std::allocator<std::pair<const std::string,std::string>>>)'
-  	C:\Users\umutc\Desktop\Programming\C++\Kmeans\KMeansOperations.cpp(246,26):
-  	'initializing': cannot convert from 'initializer list' to 'const std::map<std::string,std::string,std::less<std::string>,std::allocator<std::pair<const std::string,std::string>>>'
-  		C:\Users\umutc\Desktop\Programming\C++\Kmeans\KMeansOperations.cpp(246,26):
-  		'std::map<std::string,std::string,std::less<std::string>,std::allocator<std::pair<const std::string,std::string>>>::map(std::initializer_list<std::pair<const std::string,std::string>>)': cannot convert argument 1 from 'initializer list' to 'std::initializer_list<std::pair<const std::string,std::string>>'
-  			C:\Users\umutc\Desktop\Programming\C++\Kmeans\KMeansOperations.cpp(246,26):
-  			Element '1': no conversion from 'initializer list' to 'std::pair<const std::string,std::string>'
-  			C:\Users\umutc\Desktop\Programming\C++\Kmeans\KMeansOperations.cpp(246,26):
-  			while trying to match the argument list '(initializer list)'
-  
+  Generating code
+  0 of 803 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  Kmeans.vcxproj -> C:\Users\umutc\Desktop\Programming\C++\Kmeans\x64\Release\Kmeans.exe

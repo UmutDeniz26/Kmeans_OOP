@@ -2,7 +2,8 @@
 using namespace std;
 
 /// Constructors
-PointVector::PointVector(int ID, int vectorLength, string typeIn) : vectorID(ID), type(typeIn), vectorData(vector<Point>(vectorLength)){
+PointVector::PointVector(int ID, int vectorLength, string typeIn) : 
+    vectorID(ID), type(typeIn), vectorData(vector<Point>(vectorLength)){
 }
 
 /// Destructor

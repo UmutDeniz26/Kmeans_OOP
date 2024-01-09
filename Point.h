@@ -24,6 +24,7 @@ public:
     pair<double, double> getFeatures(void) const;
     int getClusterID(void) const;
     int getPointID(void) const;
+    static int getandIncrementPointCount(void);
     static int getPointCount(void);
 
     /// Print the point.
