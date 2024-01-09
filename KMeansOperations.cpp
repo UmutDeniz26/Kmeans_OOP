@@ -9,7 +9,7 @@ KMeansOperations::KMeansOperations(string path ,int Kval, int epochVal) : epoch(
 	points(PointVector(1, 0, "Samples Vector")),K(Kval){
 }
 KMeansOperations::KMeansOperations(string path) : 
-	path(path), K(0),epoch(0), points(PointVector(1, 0, "Samples Vector")){
+	path(path), K(0),epoch(0), points(PointVector( getandIncrementVectorCount(), 0, "Samples Vector")){
 }
 
 /// This function is used to initialize points with random values
@@ -85,7 +85,7 @@ void KMeansOperations::getUserInput(void) {
 /// This function is used to run the K-Means algorithm
 void KMeansOperations::run(void) {
 	initPointsWithFile(path);
-	if (!setK(getK())) {
+	if (!setK(getK()) or !setEpoch(getEpoch())) {
 		getUserInput();
 	}
 	centroids = PointVector(-2, getK(), "Centroid Vector");
@@ -99,18 +99,22 @@ void KMeansOperations::run(void) {
 
 /// This function is used to initialize centroids with random values
 void KMeansOperations::initFirstCentroids() {
-	int i = 0;
-	srand(static_cast<unsigned int>(time(nullptr)));random_device rd;mt19937 gen(rd());
-	uniform_int_distribution<int> dis(0, Point::getPointCount());
+	srand(static_cast<unsigned int>(time(nullptr)));
 	
-	transform(centroids.getVector().begin(), centroids.getVector().end(), centroids.getVector().begin(),
+	vector<int> randomNumbers( getPointCount());
+	for (int i = 0; i < getPointCount(); ++i) {randomNumbers[i] = i;}
+	random_shuffle(randomNumbers.begin(), randomNumbers.end());
+
+	int i = 0;
+	for_each(centroids.getVector().begin(), centroids.getVector().end(),
 		[&](Point& element) {
-			return new Point(i, i++, getPointsVector().getPointElement(dis(gen)).getFeatures());
+			element.setClusterID(i++);
+			element.setFeatures(getPointsVector().getVector()[randomNumbers[i]].getFeatures());
 		}
 	);
 }
 
-/// This function is used to assign points to the closest cluster
+/// This function is used to assign points to the closest cluster ( element.setClusterID() )
 PointVector& KMeansOperations::assignPointsClosestCluster(void) {
 	double d1, d2, d; int newCluster, i = 0;
 
@@ -121,27 +125,29 @@ PointVector& KMeansOperations::assignPointsClosestCluster(void) {
 	for_each(getPointsVector().getVector().begin(), getPointsVector().getVector().end(),
 		[&](Point& element) {
 			for_each(getCentroidVector().getVector().begin(), getCentroidVector().getVector().end(),
-			[&](Point& centroid) {
+				[&](Point& centroid) {
 					d1 = element.getFeatures().first - centroid.getFeatures().first;
 					d2 = element.getFeatures().second - centroid.getFeatures().second;
 					d = sqrt(pow(d1, 2) + pow(d2, 2));
 					tempDistanceArr[(i++ % getK())] = d; //overwrite distances by using mod
 			});
-		maxDistanceIt = min_element(tempDistanceArr.begin(), tempDistanceArr.end());  // find iterator
-		index = distance(tempDistanceArr.begin(), maxDistanceIt); // calculate index
-		newCluster = getCentroidVector().getVector()[index].getClusterID(); // decide newCluster
-		element.setClusterID(newCluster);
+			maxDistanceIt = min_element(tempDistanceArr.begin(), tempDistanceArr.end());  // find iterator
+			index = distance(tempDistanceArr.begin(), maxDistanceIt); // calculate index
+			newCluster = getCentroidVector().getVector()[index].getClusterID(); // decide newCluster
+			element.setClusterID(newCluster);
 		}
 	);
+	//assign new clusters to clusterVectors due to new cluster IDs
 	assignNewClusters();
 	return getPointsVector();
 }
 
-/// This function is used to assign points to the closest cluster
+/// This function is used to assign new clusters to clusterVectors due to new cluster IDs ( to update clusterVectors )
 vector<PointVector>& KMeansOperations::assignNewClusters() {
 	clearClusterVectors(clusterVectors);
 	for (int i = 0; i < getK(); i++) {
-		remove_copy_if(getPointsVector().getVector().begin(), getPointsVector().getVector().end(), back_inserter(clusterVectors[i].getVector()),
+		remove_copy_if(getPointsVector().getVector().begin(), getPointsVector().getVector().end(), 
+			back_inserter(clusterVectors[i].getVector()), //back_inserter is used to insert elements to the end of the vector
 			[&](Point& element) {
 				return element.getClusterID() != i;
 			});
@@ -154,7 +160,8 @@ void KMeansOperations::updateCentroids(void) {
 	assignPointsClosestCluster();
 	transform(getCentroidVector().getVector().begin(), getCentroidVector().getVector().end(), getCentroidVector().getVector().begin(),
 		[&](Point& element) {
-			return Point(0, element.getClusterID(), calculateCentroidCoordinate(clusterVectors[element.getClusterID()].getVector()));
+			return Point(0, element.getClusterID(), 
+				calculateCentroidCoordinate(clusterVectors[element.getClusterID()].getVector()) );
 		});
 }
 
@@ -184,16 +191,6 @@ vector<PointVector>& KMeansOperations::getClusterVectors() {return clusterVector
 void KMeansOperations::addClusterVector(PointVector& a) {
 	getClusterVectors().push_back(a);
 }
-bool KMeansOperations::doesItIncludeVector(PointVector target, vector<PointVector> whereToFind) {
-	const int k_id = target.getClusterID();
-	bool flag = false;
-	for_each(whereToFind.begin(), whereToFind.end(), [&](PointVector& vectorElement) {
-		if (vectorElement.getClusterID() == k_id) {
-			flag = true;return;
-		}
-		});
-	return flag;
-}
 void KMeansOperations::clearClusterVectors(vector<PointVector>& in) {
 	for_each(in.begin(), in.end(), [&](PointVector& pointVectorElement) {
 		pointVectorElement.getVector().clear();
@@ -201,12 +198,14 @@ void KMeansOperations::clearClusterVectors(vector<PointVector>& in) {
 	);
 }
 
-
+/// This vector is used to store colors for clusters
 const vector<string> colors = {
-	"mediumaquamarine", "lawngreen", "mediumblue", "paleturquoise","mediumpurple", "dodgerblue", 
+	"mediumaquamarine", "lawngreen", "mediumblue", "paleturquoise","mediumpurple", "dodgerblue",
 	"mediumslateblue", "darkcyan", "mediumseagreen", "lightcyan", "lightblue", "mediumseagreen",
-	"forestgreen", "olive", "darkolivegreen", "lightgoldenrodyellow", "olivedrab", "mediumturquoise", 
+	"forestgreen", "olive", "darkolivegreen", "lightgoldenrodyellow", "olivedrab", "mediumturquoise",
 	"cyan", "seashell", "darkgray", "darkslategray", "darkslateblue", "darkgreen", "darkblue", "darkred",
+	"darkmagenta", "darkgoldenrod", "darkorange", "darkorchid", "darkviolet", "darkkhaki", "darkcyan",
+	"darkturquoise", "cadetblue", "firebrick", "indianred", "indigo", "lightcoral", "lightpink", "lightsalmon"
 };
 
 /// This function is used to print information about the clusters
@@ -218,16 +217,18 @@ void KMeansOperations::print() {
 	getPointsVector().print();
 
 	// Print information about clusters
+	cout<<endl<<endl<<"Clusters: "<<endl;
 	for (int i = 0; i < getClusterVectors().size(); ++i) {
-		cout << "Cluster " << i + 1 <<"( " <<colors[i] <<" )" << ": ";
-		cout << "Number of points: " << getClusterVectors()[i].getVector().size() << endl;
+		cout << "Cluster " << i + 1 <<"( " <<colors[i] <<" )" << ": "
+			 <<"Number of points: " << getClusterVectors()[i].getVector().size() << endl;
 	}
 	cout <<endl<< "K value: " << getK() << endl;
 	cout << "Epoch: " << getEpoch() << endl;
+
 }
 
 /// This function is used to plot the clusters
-void KMeansOperations::plotClusters() {
+void KMeansOperations::plot() {
 
 	// Plot each cluster
 	for (int i = 0; i < getClusterVectors().size(); ++i) {

@@ -32,8 +32,8 @@ void Point::operator=(const Point* b) {
 void Point::print(void) {
     cout <<
         "ID: " << setw(3) << getPointID() <<
-        "  ,  value1: " << fixed << setw(12) << getFeatures().first <<
-        "  |  value2: " << fixed << setw(12) << getFeatures().second <<
+        "  ,  X: " << fixed << setw(12) << getFeatures().first <<
+        "  |  Y: " << fixed << setw(12) << getFeatures().second <<
         "  |  Cluster " << fixed << setw(3) << getClusterID()<<endl;
 }
 

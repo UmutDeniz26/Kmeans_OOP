@@ -11,7 +11,7 @@ class Point
 {
 public:
     /// Constructor.
-    Point(int ID = -1, int cluster = 0, pair<double, double> featuresIn = make_pair(-1, -1));
+    Point(int ID = 0, int cluster = 0, pair<double, double> featuresIn = make_pair(0, 0));
     
     /// Destructor.
     ~Point();

@@ -10,6 +10,8 @@ PointVector::PointVector(int ID, int vectorLength, string typeIn) :
 PointVector::~PointVector(){
 }
 
+int PointVector::vectorCount = 0;
+
 /// Vector Operations
 void PointVector::setVectorElement(int index, Point &input){
     vectorData[index] = input;
@@ -23,6 +25,7 @@ string PointVector::getType(void) const {return type;}
 Point& PointVector::getPointElement(int index){return getVector()[index];}
 int PointVector::getVectorID(void) const{return vectorID;}
 vector<Point>& PointVector::getVector(void){return vectorData;}
+int PointVector::getandIncrementVectorCount(void){return ++vectorCount;}
 
 /// Prints the vector and its features
 void PointVector::print(void){

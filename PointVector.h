@@ -13,7 +13,7 @@ class PointVector : public Point
 {
 public:
     /// Constructor 
-    PointVector(int ID = -1, int vectorLength = 0, string typeIn = "Not Defined");
+    PointVector(int ID = getandIncrementVectorCount(), int vectorLength = 0, string typeIn = "Not Defined");
     
     /// Destructor
     ~PointVector();
@@ -27,6 +27,7 @@ public:
     int getVectorID(void) const;
     vector<Point>& getVector(void);
     string getType(void) const;
+    static int getandIncrementVectorCount(void);
 
     /// Prints the vector
     virtual void print(void);
@@ -36,6 +37,7 @@ public:
     bool operator<(const PointVector& other) const;
 
 private:
+    static int vectorCount;   /**< The number of vectors. */
     string type;              /**< The type of the vector. */
     const int vectorID;       /**< The ID of the vector. */
     vector<Point> vectorData; /**< The vector containing points. */

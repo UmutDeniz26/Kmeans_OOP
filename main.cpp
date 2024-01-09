@@ -4,17 +4,11 @@
 
 int main(int argc, char** argv) {
 
-    // Create an instance of KMeansOperations with 3 clusters and 20 epochs.
-    KMeansOperations Kmean1("40.txt",5,10);
+    KMeansOperations Kmean1("40.txt",2,5);
 
-    // Run the K-Means clustering algorithm.
     Kmean1.run();
-
-    // Print the results of the clustering.
     Kmean1.print();
-
-    // Plot the clusters using matplotlibcpp.
-    Kmean1.plotClusters();
+    Kmean1.plot();
 
     return 0;
 }
